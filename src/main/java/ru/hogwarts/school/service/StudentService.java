@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 
 
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Сервисный класс для сущности "студент" с методами CRUD
  */
+@Service
 public class StudentService {
     private final Map<Long, Student> studentMap = new HashMap<>();
     private Long count = 0L;
@@ -51,8 +53,10 @@ public class StudentService {
     }
 
     public List<Student> findStudentsByAge(int age) {
-        return studentMap.values().stream()
-                .filter(student -> student.getAge()==age)
+        if (age < 0) {
+            throw new IllegalArgumentException("Возраст не может быть отрицательным");
+        } else return studentMap.values().stream()
+                .filter(student -> student.getAge() == age)
                 .toList();
     }
 

@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("faculty")
+@RequestMapping("/faculty")
 public class FacultyController {
-    public final FacultyService facultyService;
+    private final FacultyService facultyService;
 
     public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
@@ -23,7 +23,7 @@ public class FacultyController {
         try {
             Faculty faculty = facultyService.getFaculty(id);
             return ResponseEntity.ok(faculty);
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -39,7 +39,7 @@ public class FacultyController {
         try {
             facultyService.updateFaculty(id, faculty);
             return ResponseEntity.ok(faculty);
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -49,7 +49,7 @@ public class FacultyController {
         try {
             facultyService.removeFaculty(id);
             return ResponseEntity.ok().build();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
 

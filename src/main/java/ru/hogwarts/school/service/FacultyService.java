@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 
 import java.util.*;
@@ -8,6 +9,7 @@ import java.util.*;
 /**
  * Сервисный класс для сущности "факультет" с методами CRUD
  */
+@Service
 public class FacultyService {
     private final Map<Long, Faculty> facultyMap = new HashMap<>();
     private Long count = 0L;
