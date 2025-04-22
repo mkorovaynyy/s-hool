@@ -2,13 +2,15 @@ package ru.hogwarts.school.model;
 
 import java.util.Objects;
 
+/**
+ * Класс для описания сущности "факультет"
+ */
 public class Faculty {
-   private Long id;
+   private Long id = 0L;
    String name;
    String color;
 
-    public Faculty(Long id, String name, String color) {
-        this.id = id;
+    public Faculty(String name, String color) {
         this.name = name;
         this.color = color;
     }
