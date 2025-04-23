@@ -23,11 +23,11 @@ public class StudentService {
         return studentMap;
     }
 
-    public Long getCount() {
+    public long getCount() {
         return count;
     }
 
-    public Long addStudent(@NotNull Student student) {
+    public long addStudent(@NotNull Student student) {
         count++;
         student.setId(count);
         studentMap.put(student.getId(), student);

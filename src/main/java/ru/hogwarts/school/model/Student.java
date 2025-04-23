@@ -6,7 +6,7 @@ import java.util.Objects;
  * Класс для описания сущности "студент"
  */
 public class Student {
-    private Long id = 0L;
+    private long id = 0L;
     private String name;
     private int age;
 

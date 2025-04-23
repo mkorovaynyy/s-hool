@@ -12,7 +12,7 @@ import java.util.*;
 @Service
 public class FacultyService {
     private final Map<Long, Faculty> facultyMap = new HashMap<>();
-    private Long count = 0L;
+    private long count = 0L;
 
     public FacultyService() {
     }
@@ -21,11 +21,11 @@ public class FacultyService {
         return facultyMap;
     }
 
-    public Long getCount() {
+    public long getCount() {
         return count;
     }
 
-    public Long addFaculty(@NotNull Faculty faculty) {
+    public long addFaculty(@NotNull Faculty faculty) {
         count++;
         faculty.setId(count);
         facultyMap.put(faculty.getId(), faculty);

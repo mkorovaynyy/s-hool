@@ -6,7 +6,7 @@ import java.util.Objects;
  * Класс для описания сущности "факультет"
  */
 public class Faculty {
-   private Long id = 0L;
+   private long id = 0L;
    String name;
    String color;
 
