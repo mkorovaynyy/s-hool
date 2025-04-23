@@ -25,10 +25,11 @@ public class FacultyService {
         return count;
     }
 
-    public void addFaculty(@NotNull Faculty faculty) {
+    public Long addFaculty(@NotNull Faculty faculty) {
         count++;
         faculty.setId(count);
         facultyMap.put(faculty.getId(), faculty);
+        return faculty.getId();
     }
 
     public Faculty getFaculty(Long id) {
@@ -43,10 +44,11 @@ public class FacultyService {
         } else throw new NoSuchElementException("Факультет с указанным id отсутствует");
     }
 
-    public void updateFaculty(Long id, Faculty faculty) {
+    public Faculty updateFaculty(Long id, Faculty faculty) {
         if (facultyMap.containsKey(id)) {
             faculty.setId(id);
             facultyMap.put(id, faculty);
+            return faculty;
         } else throw new NoSuchElementException("Факультет с указанным id отсутствует");
     }
 

@@ -27,10 +27,11 @@ public class StudentService {
         return count;
     }
 
-    public void addStudent(@NotNull Student student) {
+    public Long addStudent(@NotNull Student student) {
         count++;
         student.setId(count);
         studentMap.put(student.getId(), student);
+        return student.getId();
     }
 
     public Student getStudent(Long id) {
@@ -45,10 +46,11 @@ public class StudentService {
         } else throw new NoSuchElementException("Студент с указанным id отсутствует");
     }
 
-    public void updateStudent(Long id, Student student) {
+    public Student updateStudent(Long id, Student student) {
         if (studentMap.containsKey(id)) {
             student.setId(id);
             studentMap.put(id, student);
+            return student;
         } else throw new NoSuchElementException("Студент с указанным id отсутствует");
     }
 

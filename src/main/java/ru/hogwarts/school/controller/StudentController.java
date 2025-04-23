@@ -6,7 +6,6 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/student")
@@ -17,8 +16,8 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @GetMapping({"id"})
-    public ResponseEntity<Student> getStudent(@RequestParam Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Student> getStudent(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(studentService.getStudent(id));
         } catch (Exception e) {
@@ -31,17 +30,19 @@ public class StudentController {
         studentService.addStudent(student);
         return ResponseEntity.ok(student);
     }
-    @PutMapping({"id"})
-    public ResponseEntity<Student> updateStudent(@RequestParam Long id, @RequestBody Student student) {
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
         try {
             studentService.updateStudent(id, student);
             return ResponseEntity.ok(student);
         } catch (Exception e) {
-            return  ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
     }
-    @DeleteMapping({"id"})
-    public ResponseEntity<Student> removeStudent(@RequestParam Long id) {
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeStudent(@PathVariable Long id) {
         try {
             studentService.removeStudent(id);
             return ResponseEntity.ok().build();
@@ -49,12 +50,13 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping
     public ResponseEntity<List<Student>> findStudentsByAge(@RequestParam(required = false) int age) {
-         try {
-             return ResponseEntity.ok(studentService.findStudentsByAge(age));
-         } catch (Exception e) {
-             return ResponseEntity.notFound().build();
-         }
+        try {
+            return ResponseEntity.ok(studentService.findStudentsByAge(age));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

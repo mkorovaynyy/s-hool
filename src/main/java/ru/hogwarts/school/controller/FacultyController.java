@@ -7,7 +7,6 @@ import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/faculty")
@@ -18,7 +17,7 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @GetMapping({"id"})
+    @GetMapping("/{id}")
     public ResponseEntity<Faculty> getFacultyById(@PathVariable Long id) {
         try {
             Faculty faculty = facultyService.getFaculty(id);
@@ -34,7 +33,7 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @PutMapping({"id"})
+    @PutMapping("/{id}")
     public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @RequestBody Faculty faculty) {
         try {
             facultyService.updateFaculty(id, faculty);
@@ -44,18 +43,18 @@ public class FacultyController {
         }
     }
 
-    @DeleteMapping({"id"})
-    public ResponseEntity<Faculty> removeFaculty(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeFaculty(@PathVariable Long id) {
         try {
             facultyService.removeFaculty(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-
     }
-    @GetMapping
-    public ResponseEntity<List<Faculty>> findAllFacultiesByColor(@RequestParam(required = false) String color) {
+
+    @GetMapping("/by-color")
+    public ResponseEntity<List<Faculty>> findAllFacultiesByColor(@RequestParam String color) {
         if (color != null && !color.isBlank()) {
             return ResponseEntity.ok(facultyService.findAllFacultiesByColor(color));
         }
