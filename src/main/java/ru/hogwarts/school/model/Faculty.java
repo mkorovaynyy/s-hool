@@ -1,11 +1,18 @@
 package ru.hogwarts.school.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 import java.util.Objects;
 
 /**
  * Класс для описания сущности "факультет"
  */
+@Entity
 public class Faculty {
+    @Id
+    @GeneratedValue
    private long id = 0L;
    String name;
    String color;

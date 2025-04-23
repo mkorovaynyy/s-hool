@@ -3,6 +3,7 @@ package ru.hogwarts.school.service;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.*;
 
@@ -11,70 +12,31 @@ import java.util.*;
  */
 @Service
 public class FacultyService {
-    private final Map<Long, Faculty> facultyMap = new HashMap<>();
-    private long count = 0L;
+    private final FacultyRepository facultyRepository;
 
-    public FacultyService() {
-    }
-
-    public Map<Long, Faculty> getFacultyMap() {
-        return facultyMap;
-    }
-
-    public long getCount() {
-        return count;
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
     }
 
     public long addFaculty(@NotNull Faculty faculty) {
-        count++;
-        faculty.setId(count);
-        facultyMap.put(faculty.getId(), faculty);
+        facultyRepository.save(faculty);
         return faculty.getId();
     }
 
     public Faculty getFaculty(Long id) {
-        if (facultyMap.containsKey(id)) {
-            return facultyMap.get(id);
-        } else throw new NoSuchElementException("Факультет с указанным id отсутствует");
+     return facultyRepository.findById(id).get();
     }
 
     public void removeFaculty(Long id) {
-        if (facultyMap.containsKey(id)) {
-            facultyMap.remove(id);
-        } else throw new NoSuchElementException("Факультет с указанным id отсутствует");
+        facultyRepository.deleteById(id);
     }
 
     public Faculty updateFaculty(Long id, Faculty faculty) {
-        if (facultyMap.containsKey(id)) {
-            faculty.setId(id);
-            facultyMap.put(id, faculty);
-            return faculty;
-        } else throw new NoSuchElementException("Факультет с указанным id отсутствует");
+        faculty.setId(id);
+        return facultyRepository.save(faculty);
     }
 
     public List<Faculty> findAllFacultiesByColor(String color) {
-        return facultyMap.values().stream()
-                .filter(faculty -> faculty.getColor().equals(color))
-                .toList();
-    }
-
-    @Override
-    public String toString() {
-        return "FacultyService{" +
-                "facultyMap=" + facultyMap +
-                ", count=" + count +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        FacultyService that = (FacultyService) o;
-        return Objects.equals(facultyMap, that.facultyMap) && Objects.equals(count, that.count);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(facultyMap, count);
+      return facultyRepository.findByColor(color);
     }
 }
