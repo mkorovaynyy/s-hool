@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -10,6 +11,7 @@ import java.util.Objects;
  * Класс для описания сущности "студент"
  */
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Student {
     @Id
     @GeneratedValue

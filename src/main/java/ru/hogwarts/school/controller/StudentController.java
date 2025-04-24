@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
@@ -17,46 +18,50 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable Long id) {
+    public ResponseEntity<?> getStudent(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(studentService.getStudent(id));
+            Student student = studentService.getStudent(id);
+            return ResponseEntity.ok(student);
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Student not found with id: " + id);
         }
     }
 
     @PostMapping
     public ResponseEntity<Student> addStudent(@RequestBody Student student) {
-        studentService.addStudent(student);
-        return ResponseEntity.ok(student);
+        Student addedStudent = studentService.addStudent(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedStudent);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+    public ResponseEntity<?> updateStudent(@PathVariable Long id,
+                                           @RequestBody Student student) {
         try {
-            studentService.updateStudent(id, student);
-            return ResponseEntity.ok(student);
+            Student updatedStudent = studentService.updateStudent(id, student);
+            return ResponseEntity.ok(updatedStudent);
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Student not found with id: " + id);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeStudent(@PathVariable Long id) {
+    public ResponseEntity<?> removeStudent(@PathVariable Long id) {
         try {
             studentService.removeStudent(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Student not found with id: " + id);
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Student>> findStudentsByAge(@RequestParam(required = false) int age) {
-        try {
-            return ResponseEntity.ok(studentService.findStudentsByAge(age));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping()
+    public ResponseEntity<List<Student>> findStudentsByAge(@RequestParam int age) {
+        List<Student> students = studentService.findStudentsByAge(age);
+        return students.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(students);
     }
 }

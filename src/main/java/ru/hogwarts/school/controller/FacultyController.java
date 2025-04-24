@@ -1,11 +1,11 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.service.FacultyService;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -18,46 +18,50 @@ public class FacultyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Faculty> getFacultyById(@PathVariable Long id) {
+    public ResponseEntity<?> getFacultyById(@PathVariable Long id) {
         try {
             Faculty faculty = facultyService.getFaculty(id);
             return ResponseEntity.ok(faculty);
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Faculty not found with id: " + id);
         }
     }
 
     @PostMapping
     public ResponseEntity<Faculty> addFaculty(@RequestBody Faculty faculty) {
-        facultyService.addFaculty(faculty);
-        return ResponseEntity.ok(faculty);
+        Faculty addedFaculty = facultyService.addFaculty(faculty);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedFaculty);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @RequestBody Faculty faculty) {
+    public ResponseEntity<?> updateFaculty(@PathVariable Long id,
+                                           @RequestBody Faculty faculty) {
         try {
-            facultyService.updateFaculty(id, faculty);
-            return ResponseEntity.ok(faculty);
+            Faculty updatedFaculty = facultyService.updateFaculty(id, faculty);
+            return ResponseEntity.ok(updatedFaculty);
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Faculty not found with id: " + id);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeFaculty(@PathVariable Long id) {
+    public ResponseEntity<?> removeFaculty(@PathVariable Long id) {
         try {
             facultyService.removeFaculty(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Faculty not found with id: " + id);
         }
     }
 
-    @GetMapping("/by-color")
+    @GetMapping()
     public ResponseEntity<List<Faculty>> findAllFacultiesByColor(@RequestParam String color) {
-        if (color != null && !color.isBlank()) {
-            return ResponseEntity.ok(facultyService.findAllFacultiesByColor(color));
-        }
-        return ResponseEntity.ok(Collections.emptyList());
+        List<Faculty> faculties = facultyService.findAllFacultiesByColor(color);
+        return faculties.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(faculties);
     }
 }

@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
-import org.jetbrains.annotations.NotNull;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
@@ -20,23 +21,26 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-
-    public long addStudent(@NotNull Student student) {
+    @Transactional
+    public Student addStudent(Student student) {
         studentRepository.save(student);
-        return student.getId();
+        return student;
     }
 
     public Student getStudent(Long id) {
-       return studentRepository.findById(id).get();
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + id));
     }
 
+    @Transactional
     public void removeStudent(Long id) {
-       studentRepository.deleteById(id);
+        studentRepository.deleteById(id);
     }
 
+    @Transactional
     public Student updateStudent(Long id, Student student) {
-       student.setId(id);
-       return studentRepository.save(student);
+        student.setId(id);
+        return studentRepository.save(student);
     }
 
     public List<Student> findStudentsByAge(int age) {
