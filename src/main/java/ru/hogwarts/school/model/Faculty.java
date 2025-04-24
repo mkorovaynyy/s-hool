@@ -3,6 +3,7 @@ package ru.hogwarts.school.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.util.Objects;
@@ -11,11 +12,10 @@ import java.util.Objects;
  * Класс для описания сущности "факультет"
  */
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Faculty {
     @Id
-    @GeneratedValue
-    private long id = 0L;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id = 0L;
     String name;
     String color;
 

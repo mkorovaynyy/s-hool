@@ -1,29 +1,26 @@
 package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
-import java.util.Objects;
-
-/**
- * Класс для описания сущности "студент"
- */
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Student {
     @Id
-    @GeneratedValue
-    private long id = 0L;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private int age;
+
+    // Конструкторы
+    public Student() {}
 
     public Student(String name, int age) {
         this.name = name;
         this.age = age;
     }
 
+    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }
@@ -48,6 +45,7 @@ public class Student {
         this.age = age;
     }
 
+    // equals, hashCode, toString
     @Override
     public String toString() {
         return "Student{" +
@@ -55,17 +53,5 @@ public class Student {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, age);
     }
 }

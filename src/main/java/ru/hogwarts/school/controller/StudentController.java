@@ -57,7 +57,7 @@ public class StudentController {
         }
     }
 
-    @GetMapping()
+    @GetMapping("/by-age")
     public ResponseEntity<List<Student>> findStudentsByAge(@RequestParam int age) {
         List<Student> students = studentService.findStudentsByAge(age);
         return students.isEmpty()
