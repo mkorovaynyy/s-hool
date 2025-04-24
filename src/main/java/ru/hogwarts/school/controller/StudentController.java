@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/student")
@@ -30,8 +32,13 @@ public class StudentController {
 
     @PostMapping
     public ResponseEntity<Student> addStudent(@RequestBody Student student) {
-        Student addedStudent = studentService.addStudent(student);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedStudent);
+        try {
+            Student savedStudent = studentService.addStudent(student);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        }
     }
 
     @PutMapping("/{id}")

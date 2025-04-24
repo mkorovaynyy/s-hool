@@ -1,10 +1,7 @@
 package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
@@ -16,12 +13,14 @@ public class Faculty {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id = 0L;
+
+    @Column(nullable = false)
     String name;
+
+    @Column(nullable = false)
     String color;
 
-    public Faculty(String name, String color) {
-        this.name = name;
-        this.color = color;
+    public Faculty() {
     }
 
     public Long getId() {

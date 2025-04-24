@@ -4,20 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@Table(name = "student")
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id = 0L;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private int age;
 
-    // Конструкторы
-    public Student() {}
-
-    public Student(String name, int age) {
-        this.name = name;
-        this.age = age;
+    public Student() {
     }
 
     // Геттеры и сеттеры

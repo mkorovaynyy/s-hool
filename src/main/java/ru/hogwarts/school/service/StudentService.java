@@ -2,7 +2,9 @@ package ru.hogwarts.school.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -18,7 +20,20 @@ public class StudentService {
 
     @Transactional
     public Student addStudent(Student student) {
-        return studentRepository.save(student);
+        try {
+            if (student.getName() == null || student.getName().isBlank()) {
+                throw new IllegalArgumentException("Student name cannot be empty");
+            }
+            if (student.getAge() <= 0) {
+                throw new IllegalArgumentException("Age must be positive");
+            }
+            return studentRepository.save(student);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error creating student: " + e.getMessage()
+            );
+        }
     }
 
     public Student getStudent(Long id) {
