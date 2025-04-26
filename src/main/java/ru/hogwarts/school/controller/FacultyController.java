@@ -64,4 +64,12 @@ public class FacultyController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(faculties);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Faculty>> searchFaculties(@RequestParam String query) {
+        List<Faculty> faculties = facultyService.searchFaculties(query);
+        return faculties.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(faculties);
+    }
 }
