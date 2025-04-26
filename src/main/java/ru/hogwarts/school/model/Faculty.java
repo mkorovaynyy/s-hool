@@ -1,16 +1,26 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+/**
+ * Класс для описания сущности "факультет"
+ */
+@Entity
 public class Faculty {
-   private Long id;
-   String name;
-   String color;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id = 0L;
 
-    public Faculty(Long id, String name, String color) {
-        this.id = id;
-        this.name = name;
-        this.color = color;
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String color;
+
+    public Faculty() {
     }
 
     public Long getId() {
