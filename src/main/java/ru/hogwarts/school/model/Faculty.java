@@ -15,10 +15,10 @@ public class Faculty {
     private Long id = 0L;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 
     @Column(nullable = false)
-    String color;
+    private String color;
 
     public Faculty() {
     }
