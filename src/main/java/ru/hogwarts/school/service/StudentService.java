@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -60,5 +61,13 @@ public class StudentService {
 
     public List<Student> findStudentsByAge(int age) {
         return studentRepository.findAllByAge(age);
+    }
+
+    public List<Student> findStudentsByAgeBetween(int minAge, int maxAge) {
+        return studentRepository.findByAgeBetween(minAge, maxAge);
+    }
+    public Faculty getStudentFaculty(Long id) {
+        Student student = getStudent(id);
+        return student.getFaculty();
     }
 }

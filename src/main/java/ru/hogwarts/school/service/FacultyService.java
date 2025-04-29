@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.*;
@@ -43,5 +44,12 @@ public class FacultyService {
 
     public List<Faculty> findAllFacultiesByColor(String color) {
         return facultyRepository.findByColor(color);
+    }
+    public List<Faculty> searchFaculties(String query) {
+        return facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(query, query);
+    }
+    public List<Student> getFacultyStudents(Long id) {
+        Faculty faculty = getFaculty(id);
+        return faculty.getStudents();
     }
 }
