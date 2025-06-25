@@ -9,17 +9,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.hogwarts.school.entities.Faculty;
 import ru.hogwarts.school.entities.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class StudentControllerTestRestTemplateTest {
+class StudentControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -59,16 +56,16 @@ class StudentControllerTestRestTemplateTest {
 
     @Test
     void addStudent_shouldCreateNewStudent() {
-        // Arrange
+
         Student student = new Student();
         student.setName("New Student");
         student.setAge(21);
 
-        // Act
+
         ResponseEntity<Student> response = restTemplate.postForEntity(
                 "/student", student, Student.class);
 
-        // Assert
+
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertNotNull(response.getBody().getId());
@@ -76,7 +73,7 @@ class StudentControllerTestRestTemplateTest {
 
     @Test
     void updateStudent_shouldUpdateExistingStudent() {
-        // Arrange
+
         Student student = new Student();
         student.setName("Original Name");
         student.setAge(22);
@@ -86,21 +83,21 @@ class StudentControllerTestRestTemplateTest {
 
         created.setName("Updated Name");
 
-        // Act
+
         ResponseEntity<Student> response = restTemplate.exchange(
                 "/student/" + created.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(created),
                 Student.class);
 
-        // Assert
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Updated Name", response.getBody().getName());
     }
 
     @Test
     void removeStudent_shouldDeleteStudent() {
-        // Arrange
+
         Student student = new Student();
         student.setName("To be deleted");
         student.setAge(23);
@@ -108,38 +105,38 @@ class StudentControllerTestRestTemplateTest {
                 "/student", student, Student.class);
         Student created = responseEntity.getBody();
 
-        // Act
+
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/student/" + created.getId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class);
 
-        // Assert
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
 
     @Test
     void findStudentsByAge_shouldReturnStudentsWithGivenAge() {
-        // Arrange
+
         Student student = new Student();
         student.setName("Age Test");
         student.setAge(25);
         restTemplate.postForEntity("/student", student, Student.class);
 
-        // Act
+
         ResponseEntity<Student[]> response = restTemplate.getForEntity(
                 "/student/by-age?age=25", Student[].class);
 
-        // Assert
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().length);
     }
 
     @Test
     void findStudentsByAgeBetween_shouldReturnStudentsInAgeRange() {
-        // Arrange
+
         Student student1 = new Student();
         student1.setName("Age Range 1");
         student1.setAge(18);
@@ -150,11 +147,11 @@ class StudentControllerTestRestTemplateTest {
         student2.setAge(22);
         restTemplate.postForEntity("/student", student2, Student.class);
 
-        // Act
+
         ResponseEntity<Student[]> response = restTemplate.getForEntity(
                 "/student/by-age-between?minAge=20&maxAge=25", Student[].class);
 
-        // Assert
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().length);
         assertEquals(22, response.getBody()[0].getAge());

@@ -9,13 +9,13 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.entities.Avatar;
 import ru.hogwarts.school.service.AvatarService;
 
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+
 
 @RestController
 @RequestMapping("/avatar")
@@ -48,8 +48,7 @@ public class AvatarController {
         Avatar avatar = avatarService.findAvatar(id);
         Path path = Path.of(avatar.getFilePath());
 
-        try (InputStream is = Files.newInputStream(path);
-             OutputStream os = response.getOutputStream()) {
+        try (InputStream is = Files.newInputStream(path); OutputStream os = response.getOutputStream()) {
             response.setStatus(200);
             response.setContentType(avatar.getMediaType());
             response.setContentLength(avatar.getData().length);
