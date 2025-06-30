@@ -5,8 +5,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.entities.Faculty;
+import ru.hogwarts.school.entities.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.List;
