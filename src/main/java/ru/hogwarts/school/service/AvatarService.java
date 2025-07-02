@@ -1,8 +1,9 @@
 package ru.hogwarts.school.service;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.entities.Avatar;
@@ -17,9 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static io.swagger.v3.core.util.AnnotationsUtils.getExtensions;
 
 @Service
 @Transactional
@@ -87,5 +85,9 @@ public class AvatarService {
 
     private String getExtensions(String filename) {
         return filename.substring(filename.lastIndexOf(".") + 1);
+    }
+    public Page<Avatar> getAllAvatars(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return avatarRepository.findAll(pageRequest);
     }
 }

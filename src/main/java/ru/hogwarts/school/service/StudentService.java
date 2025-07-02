@@ -70,4 +70,16 @@ public class StudentService {
         Student student = getStudent(id);
         return student.getFaculty();
     }
+
+    public int getTotalCountOfStudents() {
+        return studentRepository.getTotalCountOfStudents();
+    }
+
+    public double getAverageAge() {
+        return studentRepository.getAverageAge();
+    }
+
+    public List<Student> findLastFiveStudents() {
+        return studentRepository.findLastFiveStudents();
+    }
 }
