@@ -2,6 +2,8 @@ package ru.hogwarts.school.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @Service
 public class StudentService {
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
@@ -21,15 +24,21 @@ public class StudentService {
 
     @Transactional
     public Student addStudent(Student student) {
+        logger.info("Вызван метод создания студента");
         try {
             if (student.getName() == null || student.getName().isBlank()) {
+                logger.warn("Попытка создания студента без имени");
                 throw new IllegalArgumentException("Student name cannot be empty");
             }
             if (student.getAge() <= 0) {
+                logger.warn("Попытка создания студента с некорректным возрастом: {}", student.getAge());
                 throw new IllegalArgumentException("Age must be positive");
             }
-            return studentRepository.save(student);
+            Student savedStudent = studentRepository.save(student);
+            logger.debug("Создан студент: {}", savedStudent);
+            return savedStudent;
         } catch (Exception e) {
+            logger.error("Ошибка при создании студента: {}", e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error creating student: " + e.getMessage()
@@ -38,48 +47,80 @@ public class StudentService {
     }
 
     public Student getStudent(Long id) {
+        logger.debug("Вызван метод получения студента по ID: {}", id);
         return studentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
+                .orElseThrow(() -> {
+                    logger.error("Студент с ID {} не найден", id);
+                    return new EntityNotFoundException("Student not found");
+                });
     }
 
     @Transactional
     public void removeStudent(Long id) {
+        logger.info("Вызван метод удаления студента по ID: {}", id);
         if (!studentRepository.existsById(id)) {
+            logger.warn("Попытка удаления несуществующего студента с ID: {}", id);
             throw new EntityNotFoundException("Student not found");
         }
         studentRepository.deleteById(id);
+        logger.debug("Студент с ID {} удален", id);
     }
 
     @Transactional
     public Student updateStudent(Long id, Student student) {
+        logger.info("Вызван метод обновления студента по ID: {}", id);
         if (!studentRepository.existsById(id)) {
+            logger.warn("Попытка обновления несуществующего студента с ID: {}", id);
             throw new EntityNotFoundException("Student not found");
         }
         student.setId(id);
-        return studentRepository.save(student);
+        Student updatedStudent = studentRepository.save(student);
+        logger.debug("Обновлен студент: {}", updatedStudent);
+        return updatedStudent;
     }
 
     public List<Student> findStudentsByAge(int age) {
-        return studentRepository.findAllByAge(age);
+        logger.info("Вызван метод поиска студентов по возрасту: {}", age);
+        List<Student> students = studentRepository.findAllByAge(age);
+        logger.debug("Найдено {} студентов возраста {}", students.size(), age);
+        return students;
     }
 
     public List<Student> findStudentsByAgeBetween(int minAge, int maxAge) {
-        return studentRepository.findByAgeBetween(minAge, maxAge);
+        logger.info("Вызван метод поиска студентов в возрастном диапазоне: {} - {}", minAge, maxAge);
+        List<Student> students = studentRepository.findByAgeBetween(minAge, maxAge);
+        logger.debug("Найдено {} студентов в диапазоне {} - {}", students.size(), minAge, maxAge);
+        return students;
     }
+
     public Faculty getStudentFaculty(Long id) {
+        logger.info("Вызван метод получения факультета студента по ID: {}", id);
         Student student = getStudent(id);
-        return student.getFaculty();
+        Faculty faculty = student.getFaculty();
+        if (faculty == null) {
+            logger.warn("У студента с ID {} не указан факультет", id);
+        }
+        return faculty;
     }
 
     public int getTotalCountOfStudents() {
-        return studentRepository.getTotalCountOfStudents();
+        logger.info("Вызван метод получения общего количества студентов");
+        int count = studentRepository.getTotalCountOfStudents();
+        logger.debug("Общее количество студентов: {}", count);
+        return count;
     }
 
     public double getAverageAge() {
-        return studentRepository.getAverageAge();
+        logger.info("Вызван метод получения среднего возраста студентов");
+        double average = studentRepository.getAverageAge();
+        logger.debug("Средний возраст студентов: {}", average);
+        return average;
     }
 
     public List<Student> findLastFiveStudents() {
-        return studentRepository.findLastFiveStudents();
+        logger.info("Вызван метод получения последних 5 студентов");
+        List<Student> students = studentRepository.findLastFiveStudents();
+        logger.debug("Найдено {} последних студентов", students.size());
+        return students;
     }
 }
