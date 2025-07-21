@@ -1,6 +1,8 @@
 package ru.hogwarts.school.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -17,6 +19,7 @@ public class Avatar {
     private String mediaType;
 
     @Lob
+    @JdbcTypeCode(SqlTypes.BINARY)
     private byte[] data;
 
     @OneToOne
@@ -98,11 +101,11 @@ public class Avatar {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Avatar avatar = (Avatar) o;
-        return fileSize == avatar.fileSize && Objects.equals(id, avatar.id) && Objects.equals(filePath, avatar.filePath) && Objects.equals(mediaType, avatar.mediaType) && Objects.deepEquals(data, avatar.data) && Objects.equals(student, avatar.student);
+        return Objects.equals(id, avatar.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, filePath, fileSize, mediaType, Arrays.hashCode(data), student);
+        return Objects.hashCode(id);
     }
 }
