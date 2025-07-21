@@ -21,6 +21,33 @@ public class StudentController {
         this.studentService = studentService;
     }
 
+
+    // Шаг 1: Имена студентов на 'A' в верхнем регистре
+    @GetMapping("/names-starting-with-a")
+    public ResponseEntity<List<String>> getNamesStartingWithA() {
+        logger.info("Запрос имен студентов, начинающихся на 'A'");
+        List<String> names = studentService.getStudentNamesStartingWithA();
+        logger.debug("Найдено {} имен, начинающихся на 'A'", names.size());
+        return ResponseEntity.ok(names);
+    }
+    // Шаг 2: Средний возраст студентов (через findAll)
+    @GetMapping("/average-age-with-find-all")
+    public ResponseEntity<Double> getAverageAgeWithFindAll() {
+        logger.info("Запрос среднего возраста студентов (через findAll)");
+        double average = studentService.getAverageAgeWithFindAll();
+        logger.debug("Средний возраст через findAll: {}", average);
+        return ResponseEntity.ok(average);
+    }
+    // Шаг 4: Оптимизированная сумма
+    @GetMapping("/sum")
+    public ResponseEntity<Long> calculateSum() {
+        logger.info("Запрос вычисления суммы");
+        long sum = studentService.calculateSum();
+        logger.debug("Вычисленная сумма: {}", sum);
+        return ResponseEntity.ok(sum);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudent(@PathVariable Long id) {
         logger.info("Запрос студента по ID: {}", id);

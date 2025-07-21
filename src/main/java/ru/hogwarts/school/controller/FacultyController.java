@@ -21,6 +21,15 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
+    // Шаг 3: Самое длинное название факультета
+    @GetMapping("/longest-name")
+    public ResponseEntity<String> getLongestFacultyName() {
+        logger.info("Запрос самого длинного названия факультета");
+        String longestName = facultyService.getLongestFacultyName();
+        logger.debug("Самое длинное название: {}", longestName);
+        return ResponseEntity.ok(longestName);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getFacultyById(@PathVariable Long id) {
         logger.info("Запрос факультета по ID: {}", id);

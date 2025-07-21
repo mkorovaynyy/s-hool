@@ -9,6 +9,7 @@ import ru.hogwarts.school.entities.Faculty;
 import ru.hogwarts.school.entities.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -81,5 +82,17 @@ public class FacultyService {
         List<Student> students = faculty.getStudents();
         logger.debug("Найдено {} студентов на факультете {}", students.size(), faculty.getName());
         return students;
+    }
+
+    // Шаг 3: Самое длинное название факультета
+    public String getLongestFacultyName() {
+        logger.info("Поиск самого длинного названия факультета");
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .orElseThrow(() -> {
+                    logger.warn("Факультеты не найдены");
+                    return new RuntimeException("No faculties found");
+                });
     }
 }
