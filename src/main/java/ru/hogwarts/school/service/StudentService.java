@@ -165,4 +165,5 @@ public class StudentService {
 
         return formulaSum; // Возвращаем самый быстрый вариант
     }
+
 }
