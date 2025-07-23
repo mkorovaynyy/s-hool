@@ -101,4 +101,18 @@ public class StudentController {
         logger.info("Запрос вычисления суммы");
         return studentService.calculateSum();
     }
+
+    @GetMapping("/print-parallel")
+    public void printStudentsParallel() {
+        logger.info("Запрос параллельного вывода имен студентов");
+        List<Student> students = studentService.getFirstSixStudents();
+        studentService.printStudentsParallel(students);
+    }
+
+    @GetMapping("/print-synchronized")
+    public void printStudentsSynchronized() {
+        logger.info("Запрос синхронизированного вывода имен студентов");
+        List<Student> students = studentService.getFirstSixStudents();
+        studentService.printStudentsSynchronized(students);
+    }
 }
