@@ -29,15 +29,14 @@ public class AvatarController {
     }
 
     @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) throws IOException {
+    public String uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) throws IOException {
         logger.info("Запрос загрузки аватара для студента ID: {}", id);
         avatarService.uploadAvatar(id, avatar);
-        logger.info("Аватар для студента ID {} успешно загружен", id);
-        return ResponseEntity.ok("Avatar uploaded");
+        return "Avatar uploaded";
     }
 
     @GetMapping(value = "/{id}/avatar/preview")
-    public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) throws IOException {
+    public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) {
         logger.info("Запрос превью аватара студента ID: {}", id);
         Avatar avatar = avatarService.findAvatar(id);
 
@@ -45,7 +44,6 @@ public class AvatarController {
         headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
         headers.setContentLength(avatar.getData().length);
 
-        logger.debug("Отправка превью аватара размером {} байт", avatar.getData().length);
         return ResponseEntity.ok().headers(headers).body(avatar.getData());
     }
 
@@ -63,22 +61,16 @@ public class AvatarController {
             response.setContentLength(avatar.getData().length);
 
             is.transferTo(os);
-            logger.debug("Отправлен полный аватар размером {} байт", avatar.getData().length);
-        } catch (IOException e) {
-            logger.error("Ошибка отправки аватара: {}", e.getMessage());
-            throw e;
         }
     }
 
     @GetMapping
-    public ResponseEntity<Page<Avatar>> getAllAvatars(
+    public Page<Avatar> getAllAvatars(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         logger.info("Запрос всех аватаров. Страница: {}, Размер: {}", page, size);
-        Page<Avatar> avatars = avatarService.getAllAvatars(page, size);
-        logger.debug("Получено {} аватаров", avatars.getNumberOfElements());
-        return ResponseEntity.ok(avatars);
+        return avatarService.getAllAvatars(page, size);
     }
 }
 

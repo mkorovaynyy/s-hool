@@ -3,7 +3,6 @@ package ru.hogwarts.school.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.entities.Faculty;
 import ru.hogwarts.school.entities.Student;
@@ -22,113 +21,84 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStudent(@PathVariable Long id) {
+    public Student getStudent(@PathVariable Long id) {
         logger.info("Запрос студента по ID: {}", id);
-        try {
-            Student student = studentService.getStudent(id);
-            logger.debug("Найден студент: {}", student);
-            return ResponseEntity.ok(student);
-        } catch (Exception e) {
-            logger.error("Ошибка при получении студента: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found with id: " + id);
-        }
+        return studentService.getStudent(id);
     }
 
     @PostMapping
-    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Student addStudent(@RequestBody Student student) {
         logger.info("Запрос на создание студента: {}", student);
-        try {
-            Student savedStudent = studentService.addStudent(student);
-            logger.info("Создан новый студент: {}", savedStudent);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
-        } catch (Exception e) {
-            logger.error("Ошибка создания студента: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return studentService.addStudent(student);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
         logger.info("Запрос на обновление студента ID: {}", id);
-        try {
-            Student updatedStudent = studentService.updateStudent(id, student);
-            logger.info("Обновлен студент: {}", updatedStudent);
-            return ResponseEntity.ok(updatedStudent);
-        } catch (Exception e) {
-            logger.error("Ошибка обновления студента: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found with id: " + id);
-        }
+        return studentService.updateStudent(id, student);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeStudent(@PathVariable Long id) {
+    public void removeStudent(@PathVariable Long id) {
         logger.info("Запрос на удаление студента ID: {}", id);
-        try {
-            studentService.removeStudent(id);
-            logger.info("Студент с ID {} удален", id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            logger.error("Ошибка удаления студента: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found with id: " + id);
-        }
+        studentService.removeStudent(id);
     }
 
     @GetMapping("/{id}/faculty")
-    public ResponseEntity<Faculty> getStudentFaculty(@PathVariable Long id) {
+    public Faculty getStudentFaculty(@PathVariable Long id) {
         logger.info("Запрос факультета студента ID: {}", id);
-        try {
-            Faculty faculty = studentService.getStudentFaculty(id);
-            logger.debug("Найден факультет: {}", faculty);
-            return ResponseEntity.ok(faculty);
-        } catch (Exception e) {
-            logger.error("Ошибка получения факультета: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return studentService.getStudentFaculty(id);
     }
 
     @GetMapping("/by-age")
-    public ResponseEntity<List<Student>> findStudentsByAge(@RequestParam int age) {
+    public List<Student> findStudentsByAge(@RequestParam int age) {
         logger.info("Запрос студентов возраста: {}", age);
-        List<Student> students = studentService.findStudentsByAge(age);
-        logger.debug("Найдено {} студентов возраста {}", students.size(), age);
-        return students.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(students);
+        return studentService.findStudentsByAge(age);
     }
 
     @GetMapping("/by-age-between")
-    public ResponseEntity<List<Student>> findStudentsByAgeBetween(
+    public List<Student> findStudentsByAgeBetween(
             @RequestParam int minAge,
             @RequestParam int maxAge) {
         logger.info("Запрос студентов в диапазоне: {} - {}", minAge, maxAge);
-        List<Student> students = studentService.findStudentsByAgeBetween(minAge, maxAge);
-        logger.debug("Найдено {} студентов в диапазоне {} - {}", students.size(), minAge, maxAge);
-        return students.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(students);
+        return studentService.findStudentsByAgeBetween(minAge, maxAge);
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Integer> getTotalCount() {
+    public int getTotalCount() {
         logger.info("Запрос общего количества студентов");
-        int count = studentService.getTotalCountOfStudents();
-        logger.debug("Общее количество студентов: {}", count);
-        return ResponseEntity.ok(count);
+        return studentService.getTotalCountOfStudents();
     }
 
     @GetMapping("/average-age")
-    public ResponseEntity<Double> getAverageAge() {
+    public double getAverageAge() {
         logger.info("Запрос среднего возраста студентов");
-        double average = studentService.getAverageAge();
-        logger.debug("Средний возраст: {}", average);
-        return ResponseEntity.ok(average);
+        return studentService.getAverageAge();
     }
 
     @GetMapping("/last-five")
-    public ResponseEntity<List<Student>> getLastFiveStudents() {
+    public List<Student> getLastFiveStudents() {
         logger.info("Запрос последних 5 студентов");
-        List<Student> students = studentService.findLastFiveStudents();
-        logger.debug("Получено {} последних студентов", students.size());
-        return ResponseEntity.ok(students);
+        return studentService.findLastFiveStudents();
+    }
+
+    // Новые методы для задания 4.5
+    @GetMapping("/names-starting-with-a")
+    public List<String> getNamesStartingWithA() {
+        logger.info("Запрос имен студентов, начинающихся на 'A'");
+        return studentService.getStudentNamesStartingWithA();
+    }
+
+    @GetMapping("/average-age-with-find-all")
+    public double getAverageAgeWithFindAll() {
+        logger.info("Запрос среднего возраста студентов (через findAll)");
+        return studentService.getAverageAgeWithFindAll();
+    }
+
+    @GetMapping("/sum")
+    public long calculateSum() {
+        logger.info("Запрос вычисления суммы");
+        return studentService.calculateSum();
     }
 }

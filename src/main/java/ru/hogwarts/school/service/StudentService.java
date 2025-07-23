@@ -12,6 +12,8 @@ import ru.hogwarts.school.entities.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 @Service
 public class StudentService {
@@ -123,4 +125,45 @@ public class StudentService {
         logger.debug("Найдено {} последних студентов", students.size());
         return students;
     }
+    // Шаг 1: Имена студентов на 'A' в верхнем регистре
+    public List<String> getStudentNamesStartingWithA() {
+        logger.info("Получение имен студентов, начинающихся на 'A'");
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .filter(name -> name.toUpperCase().startsWith("A"))
+                .map(String::toUpperCase)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+    // Шаг 2: Средний возраст через findAll
+    public double getAverageAgeWithFindAll() {
+        logger.info("Вычисление среднего возраста через findAll");
+        return studentRepository.findAll().stream()
+                .mapToInt(Student::getAge)
+                .average()
+                .orElse(0.0);
+    }
+    // Шаг 4: Оптимизированная сумма
+    public long calculateSum() {
+        logger.info("Вычисление суммы чисел");
+
+        // Оптимизация 1: Использование параллельных стримов
+        long startTime = System.currentTimeMillis();
+        long parallelSum = LongStream.rangeClosed(1, 1_000_000)
+                .parallel()
+                .sum();
+        long parallelTime = System.currentTimeMillis() - startTime;
+
+        logger.debug("Параллельное вычисление: {} мс", parallelTime);
+
+        // Оптимизация 2: Использование формулы
+        startTime = System.currentTimeMillis();
+        long formulaSum = (long) 1_000_000 * (1_000_000 + 1) / 2;
+        long formulaTime = System.currentTimeMillis() - startTime;
+
+        logger.debug("Формульное вычисление: {} мс", formulaTime);
+
+        return formulaSum; // Возвращаем самый быстрый вариант
+    }
+
 }
