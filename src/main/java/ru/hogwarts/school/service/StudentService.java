@@ -19,6 +19,7 @@ import java.util.stream.LongStream;
 public class StudentService {
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
     private final StudentRepository studentRepository;
+    private final Object lock = new Object(); // Объект для синхронизации
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -41,20 +42,16 @@ public class StudentService {
             return savedStudent;
         } catch (Exception e) {
             logger.error("Ошибка при создании студента: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error creating student: " + e.getMessage()
-            );
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating student: " + e.getMessage());
         }
     }
 
     public Student getStudent(Long id) {
         logger.debug("Вызван метод получения студента по ID: {}", id);
-        return studentRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.error("Студент с ID {} не найден", id);
-                    return new EntityNotFoundException("Student not found");
-                });
+        return studentRepository.findById(id).orElseThrow(() -> {
+            logger.error("Студент с ID {} не найден", id);
+            return new EntityNotFoundException("Student not found");
+        });
     }
 
     @Transactional
@@ -125,33 +122,26 @@ public class StudentService {
         logger.debug("Найдено {} последних студентов", students.size());
         return students;
     }
+
     // Шаг 1: Имена студентов на 'A' в верхнем регистре
     public List<String> getStudentNamesStartingWithA() {
         logger.info("Получение имен студентов, начинающихся на 'A'");
-        return studentRepository.findAll().stream()
-                .map(Student::getName)
-                .filter(name -> name.toUpperCase().startsWith("A"))
-                .map(String::toUpperCase)
-                .sorted()
-                .collect(Collectors.toList());
+        return studentRepository.findAll().stream().map(Student::getName).filter(name -> name.toUpperCase().startsWith("A")).map(String::toUpperCase).sorted().collect(Collectors.toList());
     }
+
     // Шаг 2: Средний возраст через findAll
     public double getAverageAgeWithFindAll() {
         logger.info("Вычисление среднего возраста через findAll");
-        return studentRepository.findAll().stream()
-                .mapToInt(Student::getAge)
-                .average()
-                .orElse(0.0);
+        return studentRepository.findAll().stream().mapToInt(Student::getAge).average().orElse(0.0);
     }
+
     // Шаг 4: Оптимизированная сумма
     public long calculateSum() {
         logger.info("Вычисление суммы чисел");
 
         // Оптимизация 1: Использование параллельных стримов
         long startTime = System.currentTimeMillis();
-        long parallelSum = LongStream.rangeClosed(1, 1_000_000)
-                .parallel()
-                .sum();
+        long parallelSum = LongStream.rangeClosed(1, 1_000_000).parallel().sum();
         long parallelTime = System.currentTimeMillis() - startTime;
 
         logger.debug("Параллельное вычисление: {} мс", parallelTime);
@@ -166,4 +156,60 @@ public class StudentService {
         return formulaSum; // Возвращаем самый быстрый вариант
     }
 
+    public List<Student> getFirstSixStudents() {
+        logger.info("Получение первых шести студентов");
+        return studentRepository.findAll().stream().limit(6).collect(Collectors.toList());
+    }
+
+    public void printStudentsParallel(List<Student> students) {
+        if (students.size() < 6) {
+            logger.warn("Недостаточно студентов для вывода (требуется 6, найдено {})", students.size());
+            return;
+        }
+
+        // Основной поток: первые два студента
+        System.out.println(students.get(0).getName());
+        System.out.println(students.get(1).getName());
+
+        // Поток 1: третий и четвертый студент
+        new Thread(() -> {
+            System.out.println(students.get(2).getName());
+            System.out.println(students.get(3).getName());
+        }).start();
+
+        // Поток 2: пятый и шестой студент
+        new Thread(() -> {
+            System.out.println(students.get(4).getName());
+            System.out.println(students.get(5).getName());
+        }).start();
+    }
+
+    public void printStudentsSynchronized(List<Student> students) {
+        if (students.size() < 6) {
+            logger.warn("Недостаточно студентов для вывода (требуется 6, найдено {})", students.size());
+            return;
+        }
+
+        // Основной поток: первые два студента
+        synchronizedPrint(students.get(0).getName());
+        synchronizedPrint(students.get(1).getName());
+
+        // Поток 1: третий и четвертый студент
+        new Thread(() -> {
+            synchronizedPrint(students.get(2).getName());
+            synchronizedPrint(students.get(3).getName());
+        }).start();
+
+        // Поток 2: пятый и шестой студент
+        new Thread(() -> {
+            synchronizedPrint(students.get(4).getName());
+            synchronizedPrint(students.get(5).getName());
+        }).start();
+    }
+
+    private void synchronizedPrint(String message) {
+        synchronized (lock) {
+            System.out.println(message);
+        }
+    }
 }
